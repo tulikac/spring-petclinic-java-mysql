@@ -1,0 +1,121 @@
+targetScope = 'subscription'
+
+@minLength(1)
+@maxLength(64)
+@description('Name of the the environment which is used to generate a short unique hash used in all resources.')
+param environmentName string
+
+@minLength(1)
+@description('Primary location for all resources')
+param location string
+
+// Optional parameters to override the default azd resource naming conventions. Update the main.parameters.json file to provide values. e.g.,:
+// "resourceGroupName": {
+//      "value": "myGroupName"
+// }
+param appName string = ''
+param appServicePlanName string = ''
+param mysqlServerName string = ''
+param mysqlAdminName string = 'mysqlAdmin'
+@secure()
+param mysqlAdminPassword string
+param mysqlDatabaseName string = 'petclinic'
+param keyVaultName string = ''
+param resourceGroupName string = ''
+
+@description('Id of the user or app to assign application roles')
+param principalId string = ''
+
+var abbrs = loadJsonContent('./abbreviations.json')
+var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+var tags = { 'azd-env-name': environmentName }
+
+// Organize resources in a resource group
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: !empty(resourceGroupName) ? resourceGroupName : '${abbrs.resourcesResourceGroups}${environmentName}'
+  location: location
+  tags: tags
+}
+
+// Create an App Service Plan to group applications under the same payment plan and SKU
+module appServicePlan './app/appserviceplan.bicep' = {
+  name: 'appserviceplan'
+  scope: rg
+  params: {
+    name: !empty(appServicePlanName) ? appServicePlanName : '${abbrs.webServerFarms}${resourceToken}'
+    location: location
+    tags: tags
+    sku: {
+      name: 'B1'
+    }
+  }
+}
+
+// Store secrets in a keyvault
+module keyVault './security/keyvault.bicep' = {
+  name: 'keyvault'
+  scope: rg
+  params: {
+    name: !empty(keyVaultName) ? keyVaultName : '${abbrs.keyVaultVaults}${resourceToken}'
+    location: location
+    tags: tags
+    principalId: principalId
+  }
+}
+
+// The application database
+module mysql './database/mysql.bicep' = {
+  name: 'mysql'
+  scope: rg
+  dependsOn: [ keyVault ]
+  params: {
+    name: !empty(mysqlServerName) ? mysqlServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
+    databaseName: mysqlDatabaseName
+    location: location
+    tags: tags
+    mysqlAdminName: mysqlAdminName
+    mysqlAdminPassword: mysqlAdminPassword
+    keyVaultName: keyVault.outputs.name
+  }
+}
+
+// The application backend
+module app './app/app.bicep' = {
+  name: 'app'
+  scope: rg
+  dependsOn: [ appServicePlan, mysql ]
+  params: {
+    name: !empty(appName) ? appName : '${abbrs.webSitesAppService}petclinic-${resourceToken}'
+    location: location
+    tags: tags
+    appServicePlanId: appServicePlan.outputs.id
+    appSettings: {
+      SPRING_PROFILES_ACTIVE: 'mysql'
+      MYSQL_URL: mysql.outputs.jdbcUrl
+      MYSQL_USER: mysql.outputs.mysqlAdminName
+      MYSQL_PASS: '@Microsoft.KeyVault(SecretUri=${mysql.outputs.mysqlAdminPassUrl})'
+    }
+  }
+}
+
+// Give the API access to KeyVault
+module appKeyVaultAccess './security/keyvault-access.bicep' = {
+  name: 'app-keyvault-access'
+  scope: rg
+  dependsOn: [ keyVault, app ]
+  params: {
+    keyVaultName: keyVault.outputs.name
+    principalId: app.outputs.APP_IDENTITY_PRINCIPAL_ID
+  }
+}
+
+// Data outputs
+output MYSQL_URL string = mysql.outputs.jdbcUrl
+output MYSQL_USER string = mysql.outputs.mysqlAdminName
+
+// App outputs
+output AZURE_KEY_VAULT_ENDPOINT string = keyVault.outputs.endpoint
+output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
+output AZURE_LOCATION string = location
+output AZURE_TENANT_ID string = tenant().tenantId
+output SPRING_PROFILES_ACTIVE string = 'mysql'
