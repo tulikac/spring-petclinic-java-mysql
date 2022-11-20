@@ -5,7 +5,9 @@ param tags object = {}
 param databaseName string
 param keyVaultName string
 param mysqlAdminName string
-param mysqlAdminPassKey string = 'AZURE-MYSQL-ADMIN-PASSWORD'
+
+// should same as the env parameter name in `application.properties`(`MYSQL_PASS`), so that keyvault library will load it from Azure KeyValult.
+param mysqlAdminPassKey string = 'MYSQL-PASS' 
 
 @secure()
 param mysqlAdminPassword string

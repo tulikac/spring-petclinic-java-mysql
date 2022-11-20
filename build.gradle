@@ -33,6 +33,7 @@ dependencies {
   runtimeOnly 'org.postgresql:postgresql'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  implementation 'com.azure.spring:spring-cloud-azure-starter-keyvault-secrets:4.4.1'
 }
 
 tasks.named('test') {

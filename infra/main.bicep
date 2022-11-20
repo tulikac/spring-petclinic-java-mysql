@@ -90,10 +90,10 @@ module app './app/app.bicep' = {
     tags: tags
     appServicePlanId: appServicePlan.outputs.id
     appSettings: {
+      AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
       SPRING_PROFILES_ACTIVE: 'mysql'
       MYSQL_URL: mysql.outputs.jdbcUrl
       MYSQL_USER: mysql.outputs.mysqlAdminName
-      MYSQL_PASS: '@Microsoft.KeyVault(SecretUri=${mysql.outputs.mysqlAdminPassUrl})'
     }
   }
 }
