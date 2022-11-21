@@ -3,6 +3,7 @@ param location string = resourceGroup().location
 param tags object = {}
 
 // Reference Properties
+param applicationInsightsName string = ''
 param appServicePlanId string
 param managedIdentity bool = true
 
@@ -63,7 +64,8 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       {
         SCM_DO_BUILD_DURING_DEPLOYMENT: string(scmDoBuildDuringDeployment)
         ENABLE_ORYX_BUILD: string(enableOryxBuild)
-      })
+      },
+      !empty(applicationInsightsName) ? { APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsights.properties.ConnectionString } : {})
   }
 
   resource configLogs 'config' = {
@@ -78,6 +80,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       configAppSettings
     ]
   }
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = if (!empty(applicationInsightsName)) {
+  name: applicationInsightsName
 }
 
 output identityPrincipalId string = managedIdentity ? appService.identity.principalId : ''

@@ -14,6 +14,8 @@ param location string
 //      "value": "myGroupName"
 // }
 param appName string = ''
+param applicationInsightsDashboardName string = ''
+param applicationInsightsName string = ''
 param appServicePlanName string = ''
 param mysqlServerName string = ''
 param mysqlAdminName string = 'mysqlAdmin'
@@ -21,6 +23,7 @@ param mysqlAdminName string = 'mysqlAdmin'
 param mysqlAdminPassword string
 param mysqlDatabaseName string = 'petclinic'
 param keyVaultName string = ''
+param logAnalyticsName string = ''
 param resourceGroupName string = ''
 
 @description('Id of the user or app to assign application roles')
@@ -48,6 +51,19 @@ module appServicePlan './app/appserviceplan.bicep' = {
     sku: {
       name: 'B1'
     }
+  }
+}
+
+// Monitor application with Azure Monitor
+module monitoring './monitor/monitoring.bicep' = {
+  name: 'monitoring'
+  scope: rg
+  params: {
+    location: location
+    tags: tags
+    logAnalyticsName: !empty(logAnalyticsName) ? logAnalyticsName : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+    applicationInsightsName: !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
+    applicationInsightsDashboardName: !empty(applicationInsightsDashboardName) ? applicationInsightsDashboardName : '${abbrs.portalDashboards}${resourceToken}'
   }
 }
 
@@ -83,13 +99,15 @@ module mysql './database/mysql.bicep' = {
 module app './app/app.bicep' = {
   name: 'app'
   scope: rg
-  dependsOn: [ appServicePlan, mysql ]
+  dependsOn: [ appServicePlan, monitoring, mysql ]
   params: {
     name: !empty(appName) ? appName : '${abbrs.webSitesAppService}petclinic-${resourceToken}'
     location: location
     tags: tags
+    applicationInsightsName: monitoring.outputs.applicationInsightsName
     appServicePlanId: appServicePlan.outputs.id
     appSettings: {
+      APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
       SPRING_PROFILES_ACTIVE: 'mysql'
       MYSQL_URL: mysql.outputs.jdbcUrl
@@ -114,6 +132,7 @@ output MYSQL_URL string = mysql.outputs.jdbcUrl
 output MYSQL_USER string = mysql.outputs.mysqlAdminName
 
 // App outputs
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = monitoring.outputs.applicationInsightsConnectionString
 output AZURE_KEY_VAULT_ENDPOINT string = keyVault.outputs.endpoint
 output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
 output AZURE_LOCATION string = location

@@ -16,6 +16,7 @@
 
 package org.springframework.samples.petclinic;
 
+import com.microsoft.applicationinsights.attach.ApplicationInsights;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -29,6 +30,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PetClinicApplication {
 
 	public static void main(String[] args) {
+		// enable Application Insights Java programmatically, see
+		// https://learn.microsoft.com/en-us/azure/azure-monitor/app/java-spring-boot#enabling-programmatically
+		ApplicationInsights.attach();
+
 		SpringApplication.run(PetClinicApplication.class, args);
 	}
 

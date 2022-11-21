@@ -4,6 +4,7 @@ param tags object = {}
 
 param allowedOrigins array = []
 param appCommandLine string = ''
+param applicationInsightsName string = ''
 param appServicePlanId string
 param appSettings object = {}
 param serviceName string = 'app'
@@ -16,6 +17,7 @@ module app 'appservice.bicep' = {
     tags: union(tags, { 'azd-service-name': serviceName })
     allowedOrigins: allowedOrigins
     appCommandLine: appCommandLine
+    applicationInsightsName: applicationInsightsName
     appServicePlanId: appServicePlanId
     appSettings: appSettings
     runtimeName: 'java'
