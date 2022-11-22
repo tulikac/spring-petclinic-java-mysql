@@ -109,7 +109,7 @@ module app './app/app.bicep' = {
     appSettings: {
       APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
-      SPRING_PROFILES_ACTIVE: 'mysql'
+      SPRING_PROFILES_ACTIVE: 'mysql, azure'
       MYSQL_URL: mysql.outputs.jdbcUrl
       MYSQL_USER: mysql.outputs.mysqlAdminName
     }
@@ -137,4 +137,4 @@ output AZURE_KEY_VAULT_ENDPOINT string = keyVault.outputs.endpoint
 output AZURE_KEY_VAULT_NAME string = keyVault.outputs.name
 output AZURE_LOCATION string = location
 output AZURE_TENANT_ID string = tenant().tenantId
-output SPRING_PROFILES_ACTIVE string = 'mysql'
+output SPRING_PROFILES_ACTIVE string = 'azure,mysql'
