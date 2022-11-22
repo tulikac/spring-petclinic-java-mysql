@@ -1,43 +1,82 @@
+@description('Server Name for Azure database for MySQL')
 param name string
+@description('Location for all resources.')
 param location string = resourceGroup().location
 param tags object = {}
 
 param databaseName string
 param keyVaultName string
+@description('Database administrator login name')
+@minLength(1)
 param mysqlAdminName string
 
 // should same as the env parameter name in `application.properties`(`MYSQL_PASS`), so that keyvault library will load it from Azure KeyValult.
 param mysqlAdminPassKey string = 'MYSQL-PASS' 
 
+@description('Database administrator password')
+@minLength(8)
 @secure()
 param mysqlAdminPassword string
 
-resource mysqlServer 'Microsoft.DBforMySQL/servers@2017-12-01' = {
+@description('Azure database for MySQL sku name ')
+param skuName string = 'Standard_B1s'
+
+@description('Azure database for MySQL storage Size ')
+param StorageSizeGB int = 20
+
+@description('Azure database for MySQL storage Iops')
+param StorageIops int = 360
+
+@description('Azure database for MySQL pricing tier')
+@allowed([
+  'GeneralPurpose'
+  'MemoryOptimized'
+  'Burstable'
+])
+param SkuTier string = 'Burstable'
+
+@description('MySQL version')
+@allowed([
+  '5.7'
+  '8.0.21'
+])
+param mysqlVersion string = '8.0.21'
+
+@description('MySQL Server backup retention days')
+param backupRetentionDays int = 7
+
+@description('Geo-Redundant Backup setting')
+param geoRedundantBackup string = 'Disabled'
+
+resource mysqlServer 'Microsoft.DBforMySQL/flexibleServers@2021-05-01' = {
   name: name
   location: location
   tags: tags
   sku: {
-    name: 'GP_Gen5_2'
-    tier: 'GeneralPurpose'
-    capacity: 2
-    size: string(51200)
-    family: 'Gen5'
+    name: skuName
+    tier: SkuTier
   }
   properties: {
-    createMode: 'Default'
-    version: '5.7'
     administratorLogin: mysqlAdminName
     administratorLoginPassword: mysqlAdminPassword
-    storageProfile: {
-      storageMB: 51200
-      backupRetentionDays: 7
-      geoRedundantBackup: 'Disabled'
+    storage: {
+      autoGrow: 'Enabled'
+      iops: StorageIops
+      storageSizeGB: StorageSizeGB
     }
-    sslEnforcement: 'Disabled'
+    createMode: 'Default'
+    version: mysqlVersion
+    backup: {
+      backupRetentionDays: backupRetentionDays
+      geoRedundantBackup: geoRedundantBackup
+    }
+    highAvailability: {
+      mode: 'Disabled'
+    }
   }
 }
 
-resource database 'Microsoft.DBforMySQL/servers/databases@2017-12-01' = {
+resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2021-05-01' = {
   parent: mysqlServer
   name: databaseName
   properties: {
@@ -46,7 +85,7 @@ resource database 'Microsoft.DBforMySQL/servers/databases@2017-12-01' = {
   }
 }
 
-resource firewallRule_all_azure_ips 'Microsoft.DBforMySQL/servers/firewallRules@2017-12-01' = {
+resource firewallRule_all_azure_ips 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2021-05-01' = {
   parent: mysqlServer
   name: 'AllowAzureIPs'
   properties: {
@@ -68,7 +107,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
 }
 
 output name string = mysqlServer.name
-output mysqlAdminName string = '${mysqlAdminName}@${mysqlServer.name}'
+output mysqlAdminName string = mysqlAdminName
 output mysqlAdminPassUrl string = mysqlAdminPasswordSecret.properties.secretUri
 output jdbcUrl string = 'jdbc:mysql://${mysqlServer.properties.fullyQualifiedDomainName}:3306/${databaseName}?useSSL=true&requireSSL=false'
 output databaseName string = database.name
