@@ -18,7 +18,7 @@ param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
 param appServicePlanName string = ''
 param mysqlServerName string = ''
-param mysqlAdminName string = 'mysqlAdmin'
+param mysqlAdminName string = 'petclinic'
 @secure()
 param mysqlAdminPassword string
 param mysqlDatabaseName string = 'petclinic'
