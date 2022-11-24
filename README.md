@@ -1,8 +1,8 @@
-A forked **[Spring PetClinic](https://github.com/spring-projects/spring-petclinic)** application using a full set of Azure solutions:
+# [Spring PetClinic Sample Application](https://github.com/spring-projects/spring-petclinic) using a full set of Azure solutions
 
 * [Azure AppService](https://azure.microsoft.com/en-us/products/app-service/#overview) for app hosting,
 * [Azure Database for MySQL]() for storage,
-* [Azure Key Vault]() for secret/password management
+* [Azure Key Vault]() for securing secret/password,
 * [Azure Monitor]()([Azure Application Insights]()) for monitoring and logging.
 
 This application uses the [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
