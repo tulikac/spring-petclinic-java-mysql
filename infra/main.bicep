@@ -85,12 +85,21 @@ module mysql './core/database/mysql/mysql.bicep' = {
   scope: rg
   params: {
     name: !empty(mysqlServerName) ? mysqlServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
-    databaseName: mysqlDatabaseName
     location: location
     tags: tags
     mysqlAdminName: mysqlAdminName
     mysqlAdminPassword: mysqlAdminPassword
     keyVaultName: keyVault.outputs.name
+  }
+}
+
+// The application database
+module database './core/database/mysql/mysql-database.bicep' = {
+  name: 'mysql-database'
+  scope: rg
+  params: {
+    name: !empty(mysqlDatabaseName) ? mysqlDatabaseName : 'petclinic'
+    mysqlServerName: mysql.outputs.name
   }
 }
 
@@ -125,7 +134,7 @@ module appKeyVaultAccess './core/security/keyvault-access.bicep' = {
 }
 
 // Data outputs
-output MYSQL_URL string = mysql.outputs.jdbcUrl
+output MYSQL_URL string = database.outputs.jdbcUrl
 output MYSQL_USER string = mysql.outputs.mysqlAdminName
 
 // App outputs

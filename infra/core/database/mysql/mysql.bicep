@@ -4,14 +4,12 @@ param name string
 param location string = resourceGroup().location
 param tags object = {}
 
-param databaseName string
 param keyVaultName string
 @description('Database administrator login name')
 @minLength(1)
 param mysqlAdminName string
 
-// should same as the env parameter name in `application.properties`(`MYSQL_PASS`), so that keyvault library will load it from Azure KeyValult.
-param mysqlAdminPassKey string = 'MYSQL-PASS' 
+param mysqlAdminPassKey string = 'MYSQL-PASS'
 
 @description('Database administrator password')
 @minLength(8)
@@ -76,15 +74,6 @@ resource mysqlServer 'Microsoft.DBforMySQL/flexibleServers@2021-05-01' = {
   }
 }
 
-resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2021-05-01' = {
-  parent: mysqlServer
-  name: databaseName
-  properties: {
-    charset: 'utf8'
-    collation: 'utf8_general_ci'
-  }
-}
-
 resource firewallRule_all_azure_ips 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2021-05-01' = {
   parent: mysqlServer
   name: 'AllowAzureIPs'
@@ -108,6 +97,5 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
 
 output name string = mysqlServer.name
 output mysqlAdminName string = mysqlAdminName
-output mysqlAdminPassUrl string = mysqlAdminPasswordSecret.properties.secretUri
-output jdbcUrl string = 'jdbc:mysql://${mysqlServer.properties.fullyQualifiedDomainName}:3306/${databaseName}?useSSL=true&requireSSL=false'
-output databaseName string = database.name
+output mysqlAdminPassKey string = mysqlAdminPassKey
+output jdbcUrl string = 'jdbc:mysql://${mysqlServer.properties.fullyQualifiedDomainName}:3306/?useSSL=true&requireSSL=false'
