@@ -9,7 +9,7 @@ param appServicePlanId string
 param appSettings object = {}
 param serviceName string = 'app'
 
-module app 'appservice.bicep' = {
+module app '../core/host/appservice.bicep' = {
   name: '${name}-app-module'
   params: {
     name: name

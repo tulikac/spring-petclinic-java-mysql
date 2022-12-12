@@ -41,7 +41,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 // Create an App Service Plan to group applications under the same payment plan and SKU
-module appServicePlan './app/appserviceplan.bicep' = {
+module appServicePlan './core/host/appserviceplan.bicep' = {
   name: 'appserviceplan'
   scope: rg
   params: {
@@ -55,7 +55,7 @@ module appServicePlan './app/appserviceplan.bicep' = {
 }
 
 // Monitor application with Azure Monitor
-module monitoring './monitor/monitoring.bicep' = {
+module monitoring './core/monitor/monitoring.bicep' = {
   name: 'monitoring'
   scope: rg
   params: {
@@ -68,7 +68,7 @@ module monitoring './monitor/monitoring.bicep' = {
 }
 
 // Store secrets in a keyvault
-module keyVault './security/keyvault.bicep' = {
+module keyVault './core/security/keyvault.bicep' = {
   name: 'keyvault'
   scope: rg
   params: {
@@ -79,8 +79,8 @@ module keyVault './security/keyvault.bicep' = {
   }
 }
 
-// The application database
-module mysql './database/mysql.bicep' = {
+// The application database server
+module mysql './core/database/mysql/mysql.bicep' = {
   name: 'mysql'
   scope: rg
   params: {
@@ -115,7 +115,7 @@ module app './app/app.bicep' = {
 }
 
 // Give the API access to KeyVault
-module appKeyVaultAccess './security/keyvault-access.bicep' = {
+module appKeyVaultAccess './core/security/keyvault-access.bicep' = {
   name: 'app-keyvault-access'
   scope: rg
   params: {
