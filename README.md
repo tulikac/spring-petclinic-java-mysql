@@ -1,9 +1,9 @@
 # [Spring PetClinic Sample Application](https://github.com/spring-projects/spring-petclinic) using a full set of Azure solutions
 
-* [Azure AppService](https://azure.microsoft.com/en-us/products/app-service/#overview) for app hosting,
-* [Azure Database for MySQL]() for storage,
-* [Azure Key Vault]() for securing secret/password,
-* [Azure Monitor]()([Azure Application Insights]()) for monitoring and logging.
+* [Azure AppService](https://azure.microsoft.com/en-us/products/app-service/) for app hosting,
+* [Azure Database for MySQL](https://azure.microsoft.com/en-us/products/mysql/) for storage,
+* [Azure Monitor](https://azure.microsoft.com/en-us/products/monitor/)([Application Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview?tabs=net)) for monitoring and logging.
+* [Key Vault](https://azure.microsoft.com/en-us/products/key-vault/) for securing secret/password.
 
 This application uses the [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 to get you up and running on Azure quickly.
