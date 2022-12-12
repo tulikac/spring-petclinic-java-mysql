@@ -83,7 +83,6 @@ module keyVault './security/keyvault.bicep' = {
 module mysql './database/mysql.bicep' = {
   name: 'mysql'
   scope: rg
-  dependsOn: [ keyVault ]
   params: {
     name: !empty(mysqlServerName) ? mysqlServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
     databaseName: mysqlDatabaseName
@@ -99,7 +98,6 @@ module mysql './database/mysql.bicep' = {
 module app './app/app.bicep' = {
   name: 'app'
   scope: rg
-  dependsOn: [ appServicePlan, monitoring, mysql ]
   params: {
     name: !empty(appName) ? appName : '${abbrs.webSitesAppService}petclinic-${resourceToken}'
     location: location
@@ -120,7 +118,6 @@ module app './app/app.bicep' = {
 module appKeyVaultAccess './security/keyvault-access.bicep' = {
   name: 'app-keyvault-access'
   scope: rg
-  dependsOn: [ keyVault, app ]
   params: {
     keyVaultName: keyVault.outputs.name
     principalId: app.outputs.APP_IDENTITY_PRINCIPAL_ID
