@@ -7,6 +7,7 @@ param appCommandLine string = ''
 param applicationInsightsName string = ''
 param appServicePlanId string
 param appSettings object = {}
+param keyVaultName string
 param serviceName string = 'app'
 
 module app '../core/host/appservice.bicep' = {
@@ -20,6 +21,7 @@ module app '../core/host/appservice.bicep' = {
     applicationInsightsName: applicationInsightsName
     appServicePlanId: appServicePlanId
     appSettings: appSettings
+    keyVaultName: keyVaultName
     runtimeName: 'java'
     runtimeVersion: '17-java17'
     scmDoBuildDuringDeployment: true
