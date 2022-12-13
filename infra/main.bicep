@@ -117,8 +117,8 @@ module app './app/app.bicep' = {
     appSettings: {
       APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
-      SPRING_PROFILES_ACTIVE: 'mysql, azure'
-      MYSQL_URL: mysql.outputs.jdbcUrl
+      SPRING_PROFILES_ACTIVE: 'azure,mysql'
+      MYSQL_URL: database.outputs.jdbcUrl
       MYSQL_USER: mysql.outputs.mysqlAdminName
     }
   }
