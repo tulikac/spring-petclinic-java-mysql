@@ -12,7 +12,7 @@ to get you up and running on Azure quickly.
 diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/9ecdc1111e3da388a750ace41a125287d9620534)
 
 * Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
-* `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
+* Modified `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
     * `pom.xml`
       ![diff of pom.xml](readme.assests/pom.xml.diff.png)
     * `build.gradle`
