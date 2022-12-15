@@ -9,19 +9,15 @@ param environmentName string
 @description('Primary location for all resources')
 param location string
 
-// Optional parameters to override the default azd resource naming conventions. Update the main.parameters.json file to provide values. e.g.,:
-// "resourceGroupName": {
-//      "value": "myGroupName"
-// }
 param appName string = ''
 param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
 param appServicePlanName string = ''
-param mysqlServerName string = ''
-param mysqlAdminName string = 'petclinic'
+param mySQLServerName string = ''
+param mySQLServerAdminName string = 'petclinic'
 @secure()
-param mysqlAdminPassword string
-param mysqlDatabaseName string = 'petclinic'
+param mySQLServerAdminPassword string
+param mySQLDatabaseName string = 'petclinic'
 param keyVaultName string = ''
 param logAnalyticsName string = ''
 param resourceGroupName string = ''
@@ -80,26 +76,26 @@ module keyVault './core/security/keyvault.bicep' = {
 }
 
 // The application database server
-module mysql './core/database/mysql/mysql.bicep' = {
-  name: 'mysql'
+module mySQLServer './core/database/mysql/mysql-server.bicep' = {
+  name: 'mysql-server'
   scope: rg
   params: {
-    name: !empty(mysqlServerName) ? mysqlServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
+    name: !empty(mySQLServerName) ? mySQLServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
     location: location
     tags: tags
-    mysqlAdminName: mysqlAdminName
-    mysqlAdminPassword: mysqlAdminPassword
+    adminName: mySQLServerAdminName
+    adminPassword: mySQLServerAdminPassword
     keyVaultName: keyVault.outputs.name
   }
 }
 
 // The application database
-module database './core/database/mysql/mysql-database.bicep' = {
+module mySQLDatabase './core/database/mysql/mysql-db.bicep' = {
   name: 'mysql-database'
   scope: rg
   params: {
-    name: !empty(mysqlDatabaseName) ? mysqlDatabaseName : 'petclinic'
-    mysqlServerName: mysql.outputs.name
+    databaseName: !empty(mySQLDatabaseName) ? mySQLDatabaseName : 'petclinic'
+    serverName: mySQLServer.outputs.name
   }
 }
 
@@ -118,8 +114,8 @@ module app './app/app.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
       SPRING_PROFILES_ACTIVE: 'azure,mysql'
-      MYSQL_URL: database.outputs.jdbcUrl
-      MYSQL_USER: mysql.outputs.mysqlAdminName
+      MYSQL_URL: mySQLDatabase.outputs.endpoint
+      MYSQL_USER: mySQLServerAdminName
     }
   }
 }
@@ -135,8 +131,8 @@ module appKeyVaultAccess './core/security/keyvault-access.bicep' = {
 }
 
 // Data outputs
-output MYSQL_URL string = database.outputs.jdbcUrl
-output MYSQL_USER string = mysql.outputs.mysqlAdminName
+output MYSQL_URL string = mySQLDatabase.outputs.endpoint
+output MYSQL_USER string = mySQLServerAdminName
 
 // App outputs
 output APPLICATIONINSIGHTS_CONNECTION_STRING string = monitoring.outputs.applicationInsightsConnectionString
