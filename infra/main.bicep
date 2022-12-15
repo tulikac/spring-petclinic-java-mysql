@@ -75,27 +75,18 @@ module keyVault './core/security/keyvault.bicep' = {
   }
 }
 
-// The application database server
-module mySQLServer './core/database/mysql/mysql-server.bicep' = {
-  name: 'mysql-server'
+// The application database
+module mySQL './core/database/mysql/mysql-db.bicep' = {
+  name: 'mysql'
   scope: rg
   params: {
-    name: !empty(mySQLServerName) ? mySQLServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
     location: location
     tags: tags
-    adminName: mySQLServerAdminName
-    adminPassword: mySQLServerAdminPassword
-    keyVaultName: keyVault.outputs.name
-  }
-}
-
-// The application database
-module mySQLDatabase './core/database/mysql/mysql-db.bicep' = {
-  name: 'mysql-database'
-  scope: rg
-  params: {
+    serverName: !empty(mySQLServerName) ? mySQLServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
+    serverAdminName: mySQLServerAdminName
+    serverAdminPassword: mySQLServerAdminPassword
     databaseName: !empty(mySQLDatabaseName) ? mySQLDatabaseName : 'petclinic'
-    serverName: mySQLServer.outputs.name
+    keyVaultName: keyVault.outputs.name
   }
 }
 
@@ -114,7 +105,7 @@ module app './app/app.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
       SPRING_PROFILES_ACTIVE: 'azure,mysql'
-      MYSQL_URL: mySQLDatabase.outputs.endpoint
+      MYSQL_URL: mySQL.outputs.endpoint
       MYSQL_USER: mySQLServerAdminName
     }
   }
@@ -131,7 +122,7 @@ module appKeyVaultAccess './core/security/keyvault-access.bicep' = {
 }
 
 // Data outputs
-output MYSQL_URL string = mySQLDatabase.outputs.endpoint
+output MYSQL_URL string = mySQL.outputs.endpoint
 output MYSQL_USER string = mySQLServerAdminName
 
 // App outputs
