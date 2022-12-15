@@ -14,8 +14,10 @@ diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/
 * Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
 * Modified `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
     * `pom.xml`
+
       ![diff of pom.xml](readme.assests/pom.xml.diff.png)
     * `build.gradle`
+
       ![diff of build.gradle](readme.assests/build.gradle.diff.png)
 * `./src/main/resources/application-azure.properties`: enable importing KeyVault secrets(`MySQL` user password) as properties.
   see [Configurable properties of Key Vault Secret PropertySource](https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#all-configurable-properties)
