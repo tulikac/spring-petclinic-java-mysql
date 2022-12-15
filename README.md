@@ -8,34 +8,12 @@
 This application uses the [Azure Developer CLI (azd)](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/overview)
 to get you up and running on Azure quickly.
 
-## Diff from the original Spring PetClinic 
-diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/9ecdc1111e3da388a750ace41a125287d9620534)
-
-* Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
-* Modified `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
-    * `pom.xml`
-
-      ![diff of pom.xml](readme.assests/pom.xml.diff.png)
-    * `build.gradle`
-
-      ![diff of build.gradle](readme.assests/build.gradle.diff.png)
-* `./src/main/resources/application-azure.properties`: enable importing KeyVault secrets(`MySQL` user password) as properties.
-  see [Configurable properties of Key Vault Secret PropertySource](https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#all-configurable-properties)
-  ```properties
-    # Import KeyVault secrets as properties
-    spring.cloud.azure.keyvault.secret.property-sources[0].enabled=true
-    spring.cloud.azure.keyvault.secret.property-sources[0].endpoint=${AZURE_KEY_VAULT_ENDPOINT}
-  ```
-* `./src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java`: enable monitoring and logging with `Azure Application Insights`
-
-  ![diff of PetClinicApplication.java](readme.assests/PetClinicApplication.java.diff.png)
-
 ## Prerequisites
 
 The following prerequisites are required to use this application. Please ensure that you have them all installed locally.
 
 * [Azure Developer CLI](https://learn.microsoft.com/en-us/azure/developer/azure-developer-cli/install-azd)
-* Java 8 or later
+* Java 17 or later
 
 ## Quickstart
 
@@ -111,6 +89,29 @@ MYSQL_URL=...
 # Azure Database for MySQL server user name
 MYSQL_USER=...
 ```
+
+## Diff from the original Spring PetClinic
+diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/9ecdc1111e3da388a750ace41a125287d9620534)
+
+* Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
+* Modified `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
+    * `pom.xml`
+
+      ![diff of pom.xml](readme.assests/pom.xml.diff.png)
+    * `build.gradle`
+
+      ![diff of build.gradle](readme.assests/build.gradle.diff.png)
+* `./src/main/resources/application-azure.properties`: enable importing KeyVault secrets(`MySQL` user password) as properties.
+  see [Configurable properties of Key Vault Secret PropertySource](https://microsoft.github.io/spring-cloud-azure/current/reference/html/index.html#all-configurable-properties)
+  ```properties
+    # Import KeyVault secrets as properties
+    spring.cloud.azure.keyvault.secret.property-sources[0].enabled=true
+    spring.cloud.azure.keyvault.secret.property-sources[0].endpoint=${AZURE_KEY_VAULT_ENDPOINT}
+  ```
+* `./src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java`: enable monitoring and logging with `Azure Application Insights`
+
+  ![diff of PetClinicApplication.java](readme.assests/PetClinicApplication.java.diff.png)
+
 ## Security
 
 ### Roles
