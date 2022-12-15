@@ -25,6 +25,7 @@ diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/
     spring.cloud.azure.keyvault.secret.property-sources[0].endpoint=${AZURE_KEY_VAULT_ENDPOINT}
   ```
 * `./src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java`: enable monitoring and logging with `Azure Application Insights`
+
   ![diff of PetClinicApplication.java](readme.assests/PetClinicApplication.java.diff.png)
 
 ## Prerequisites
