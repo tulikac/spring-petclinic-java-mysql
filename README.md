@@ -91,7 +91,7 @@ MYSQL_USER=...
 ```
 
 ## Diff from the original Spring PetClinic
-diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/9ecdc1111e3da388a750ace41a125287d9620534)
+diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/tree/9ecdc1111e3da388a750ace41a125287d9620534)
 
 * Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
 * Modified `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
