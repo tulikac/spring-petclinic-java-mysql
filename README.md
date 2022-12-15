@@ -11,7 +11,7 @@ to get you up and running on Azure quickly.
 ## Diff from the original Spring PetClinic 
 diff from [9ecdc111](https://github.com/spring-projects/spring-petclinic/commit/9ecdc1111e3da388a750ace41a125287d9620534)
 
-* `./infra` and `./azure.yaml`: application "infrastructure as code" files to create and configure Azure resources.
+* Added `./infra` folder and `./azure.yaml` `azd` project configuration: application "infrastructure as code" files to create and configure Azure resources.
 * `./pom.xml` and `./build.gradle`: import required libraries for `Azure Key Vault`/`Azure Monitor`(`Azure Application Insights`) integration.
     * `pom.xml`
       ![diff of pom.xml](readme.assests/pom.xml.diff.png)
