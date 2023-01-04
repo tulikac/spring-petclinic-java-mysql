@@ -77,7 +77,7 @@ module keyVault './core/security/keyvault.bicep' = {
 
 // The application database
 module mySql './core/database/mysql/mysql-db.bicep' = {
-  name: 'mysql'
+  name: 'mysql-db'
   scope: rg
   params: {
     location: location

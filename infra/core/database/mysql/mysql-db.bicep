@@ -17,7 +17,7 @@ param serverAdminPassword string
 
 // The database server
 module server 'mysql-server.bicep' = {
-  name: 'mysql'
+  name: 'mysql-server'
   params: {
     name: serverName
     location: location
