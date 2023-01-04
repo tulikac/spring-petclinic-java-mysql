@@ -10,7 +10,9 @@ param keyVaultName string
 @minLength(1)
 param adminName string = 'mySqlAdmin'
 
-param adminPassKey string = 'MYSQL-PASS'
+// this is not the password, but the key used to load password from Key Vault
+#disable-next-line secure-secrets-in-params 
+param adminPasswordKey string = 'MYSQL-PASS'
 
 @description('Database administrator password')
 @minLength(8)
@@ -96,7 +98,7 @@ resource firewallRuleAllowAllAzureIps 'Microsoft.DBforMySQL/flexibleServers/fire
 
 resource mySqlAdminPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   parent: keyVault
-  name: adminPassKey
+  name: adminPasswordKey
   properties: {
     value: adminPassword
   }
@@ -108,6 +110,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
 
 output name string = server.name
 output adminName string = adminName
-output adminPassKey string = adminPassKey
+// this is not the password, but the key used to load password from Key Vault
+#disable-next-line outputs-should-not-contain-secrets
+output adminPasswordKey string = adminPasswordKey
 output fullyQualifiedDomainName string = server.properties.fullyQualifiedDomainName
 output endpoint string = 'jdbc:mysql://${server.properties.fullyQualifiedDomainName}:3306/?useSSL=true&requireSSL=false'

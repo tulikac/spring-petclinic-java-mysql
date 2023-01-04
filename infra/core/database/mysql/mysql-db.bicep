@@ -8,7 +8,9 @@ param keyVaultName string
 @minLength(1)
 param serverAdminName string
 
-param serverAdminPassKey string = 'MYSQL-PASS'
+// this is not the password, but the key used to load password from Key Vault
+#disable-next-line secure-secrets-in-params
+param serverAdminPasswordKey string = 'MYSQL-PASS'
 
 @description('Database administrator password')
 @minLength(8)
@@ -24,7 +26,7 @@ module server 'mysql-server.bicep' = {
     tags: tags
     adminName: serverAdminName
     adminPassword: serverAdminPassword
-    adminPassKey: serverAdminPassKey
+    adminPasswordKey: serverAdminPasswordKey
     keyVaultName: keyVaultName
   }
 }
@@ -41,6 +43,8 @@ resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2021-05-01' = 
   ]
 }
 
-output serverAdminPassKey string = serverAdminPassKey
+// this is not the password, but the key used to load password from Key Vault
+#disable-next-line outputs-should-not-contain-secrets
+output serverAdminPasswordKey string = serverAdminPasswordKey
 output databaseName string = databaseName
 output endpoint string = 'jdbc:mysql://${server.outputs.fullyQualifiedDomainName}:3306/${databaseName}?useSSL=true&requireSSL=false'
