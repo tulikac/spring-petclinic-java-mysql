@@ -13,11 +13,11 @@ param appName string = ''
 param applicationInsightsDashboardName string = ''
 param applicationInsightsName string = ''
 param appServicePlanName string = ''
-param mySQLServerName string = ''
-param mySQLServerAdminName string = 'petclinic'
+param mySqlServerName string = ''
+param mySqlServerAdminName string = 'petclinic'
 @secure()
-param mySQLServerAdminPassword string
-param mySQLDatabaseName string = 'petclinic'
+param mySqlServerAdminPassword string
+param mySqlDatabaseName string = 'petclinic'
 param keyVaultName string = ''
 param logAnalyticsName string = ''
 param resourceGroupName string = ''
@@ -76,16 +76,16 @@ module keyVault './core/security/keyvault.bicep' = {
 }
 
 // The application database
-module mySQL './core/database/mysql/mysql-db.bicep' = {
+module mySql './core/database/mysql/mysql-db.bicep' = {
   name: 'mysql'
   scope: rg
   params: {
     location: location
     tags: tags
-    serverName: !empty(mySQLServerName) ? mySQLServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
-    serverAdminName: mySQLServerAdminName
-    serverAdminPassword: mySQLServerAdminPassword
-    databaseName: !empty(mySQLDatabaseName) ? mySQLDatabaseName : 'petclinic'
+    serverName: !empty(mySqlServerName) ? mySqlServerName : '${abbrs.dBforMySQLServers}${resourceToken}'
+    serverAdminName: mySqlServerAdminName
+    serverAdminPassword: mySqlServerAdminPassword
+    databaseName: !empty(mySqlDatabaseName) ? mySqlDatabaseName : 'petclinic'
     keyVaultName: keyVault.outputs.name
   }
 }
@@ -105,8 +105,8 @@ module app './app/app.bicep' = {
       APPLICATIONINSIGHTS_CONNECTION_STRING: monitoring.outputs.applicationInsightsConnectionString
       AZURE_KEY_VAULT_ENDPOINT: keyVault.outputs.endpoint
       SPRING_PROFILES_ACTIVE: 'azure,mysql'
-      MYSQL_URL: mySQL.outputs.endpoint
-      MYSQL_USER: mySQLServerAdminName
+      MYSQL_URL: mySql.outputs.endpoint
+      MYSQL_USER: mySqlServerAdminName
     }
   }
 }
@@ -122,8 +122,8 @@ module appKeyVaultAccess './core/security/keyvault-access.bicep' = {
 }
 
 // Data outputs
-output MYSQL_URL string = mySQL.outputs.endpoint
-output MYSQL_USER string = mySQLServerAdminName
+output MYSQL_URL string = mySql.outputs.endpoint
+output MYSQL_USER string = mySqlServerAdminName
 
 // App outputs
 output APPLICATIONINSIGHTS_CONNECTION_STRING string = monitoring.outputs.applicationInsightsConnectionString

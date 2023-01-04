@@ -94,7 +94,7 @@ resource firewallRuleAllowAllAzureIps 'Microsoft.DBforMySQL/flexibleServers/fire
   }
 }
 
-resource mySQLAdminPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+resource mySqlAdminPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   parent: keyVault
   name: adminPassKey
   properties: {
