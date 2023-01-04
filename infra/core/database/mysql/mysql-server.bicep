@@ -8,7 +8,7 @@ param keyVaultName string
 
 @description('Database administrator login name')
 @minLength(1)
-param adminName string
+param adminName string = 'mySqlAdmin'
 
 param adminPassKey string = 'MYSQL-PASS'
 
