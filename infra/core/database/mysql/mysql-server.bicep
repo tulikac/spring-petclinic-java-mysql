@@ -22,8 +22,12 @@ param adminPassword string
 @description('Azure database for MySQL sku name ')
 param skuName string = 'Standard_B1s'
 
+@allowed([
+  'Enabled'
+  'Disabled'
+])
 @description('Enable Storage Auto Grow or not')
-param enableAutoGrow bool = true
+param autoGrow string = 'Enabled'
 
 @description('Azure database for MySQL storage Size ')
 param storageSizeGB int = 20
@@ -71,7 +75,7 @@ resource server 'Microsoft.DBforMySQL/flexibleServers@2021-05-01' = {
     administratorLogin: adminName
     administratorLoginPassword: adminPassword
     storage: {
-      autoGrow: enableAutoGrow ? 'Enabled' : 'Disabled'
+      autoGrow: autoGrow
       iops: storageIops
       storageSizeGB: storageSizeGB
     }
