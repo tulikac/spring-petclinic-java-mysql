@@ -74,8 +74,18 @@ commands on our [Azure Developer CLI command](https://aka.ms/azure-dev/ref) page
 
 ## Run application locally
 
-To run this application locally with Azure solutions, you need to pass the environment variables below to the application first. Values of these
+> NOTE: Azure Database for MySQL flexible servers don't allow connections from local machines by default for security. 
+> You must add current IP address of your local machine to the firewall rules in [Azure Portal](https://ms.portal.azure.com/#view/HubsExtension/BrowseResource/resourceType/Microsoft.DBforMySQL%2Fservers) before running the application locally.
+![add firewall rule to allow local connections](readme.assests/add_mysql_firewall_rule.png)
+
+### VSCode
+You can just launch the predefined `Debug PetClinic` configuration to run the application locally if you are using VSCode. 
+![run application locally in VSCode](readme.assests/run_locally_vscode.png)
+
+### IntelliJ IDEA
+You need to pass the environment variables below to the application first. Values of these
 environment variables are all available in the `.azure/${Environment-Name}/.env` file if `azd provision` or `azd up ...` completes successfully.
+![setup environment variables in IntelliJ IDEA](readme.assests/run_locally_intellij.png)
 
 ```properties
 # activate `azure` and `mysql` spring profiles
