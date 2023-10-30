@@ -35,7 +35,7 @@ public class ChatController {
 		template.convertAndSend("/topic/public", chatMessage);
 
 		// gRPC client //
-		final ManagedChannel channel = ManagedChannelBuilder.forTarget("grpc-java-server.azurewebsites.net").build();
+		final ManagedChannel channel = ManagedChannelBuilder.forTarget("ignite-demo-grpc.azurewebsites.net").build();
 
 		// String name = "When is microsof ignite?";
 		String name = chatMessage.getContent().toString();
