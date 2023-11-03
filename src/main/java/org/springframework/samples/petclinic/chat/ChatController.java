@@ -78,7 +78,7 @@ public class ChatController {
 		computerReply.setType(MessageType.CHAT);
 		computerReply.setContent(message);
 		template.convertAndSend("/topic/public", computerReply);
-		
+
 	}
 
 	@MessageMapping("/chat.addUser")
