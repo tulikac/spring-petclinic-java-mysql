@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.stereotype.Controller;
+import org.apache.commons.lang3.StringUtils;
 
 import io.grpc.*;
 import io.grpc.examples.*;
@@ -56,7 +57,16 @@ public class ChatController {
 		// A Channel should be shutdown before stopping the process.
 		channel.shutdownNow();
 
+		// Parse incoming server string
 		String serverResponse = response.toString();
+
+		String[] stringArray = StringUtils.substringsBetween(serverResponse, "\"", "\"");
+		for (String s : stringArray) {
+			System.out.println("Output: " + s);
+		}
+
+		// Set server response as the parsed string
+		serverResponse = String.join(",", stringArray);
 
 		// set gRPC response as the chat message
 		chatMessage.setContent(serverResponse);
@@ -69,7 +79,6 @@ public class ChatController {
 		computerReply.setContent(message);
 		template.convertAndSend("/topic/public", computerReply);
 
-		// return chatMessage;
 	}
 
 	@MessageMapping("/chat.addUser")
